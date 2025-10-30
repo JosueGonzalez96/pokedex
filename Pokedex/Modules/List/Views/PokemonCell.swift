@@ -40,9 +40,7 @@ final class PokemonCell: UITableViewCell {
         stack.spacing = 4
         return stack
     }()
-    
-    // MARK: - Init
-    
+        
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupLayout()
@@ -51,9 +49,7 @@ final class PokemonCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - Layout
-    
+        
     private func setupLayout() {
         contentView.addSubview(pokemonImageView)
         contentView.addSubview(container)
@@ -75,9 +71,7 @@ final class PokemonCell: UITableViewCell {
             container.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
         ])
     }
-    
-    // MARK: - Configure
-    
+        
     func configure(with pokemon: PokemonEntry) {
         nameLabel.text = pokemon.name.capitalized
         numberLabel.text = "#\(pokemon.id)"

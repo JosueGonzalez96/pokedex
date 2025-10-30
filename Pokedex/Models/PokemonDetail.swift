@@ -7,29 +7,26 @@
 
 import Foundation
 struct PokemonDetail: Decodable {
-    struct Sprite: Decodable {
-        let front_default: String?
-        let front_shiny: String?
-    }
-
-    struct TypeEntry: Decodable {
-        struct type: Decodable {
-            let name: String
-        }
-        let type: type
-    }
-
-    struct StatEntry: Decodable {
-        struct Stat: Decodable {
-            let name: String
-        }
-        let base_stat: Int
-        let stat: Stat
-    }
-
     let id: Int
     let name: String
     let sprites: Sprite
     let types: [TypeEntry]
     let stats: [StatEntry]
+}
+struct Sprite: Decodable {
+    let front_default: String?
+    let front_shiny: String?
+}
+struct TypeEntry: Decodable {
+    struct type: Decodable {
+        let name: String
+    }
+    let type: type
+}
+struct StatEntry: Decodable {
+    struct Stat: Decodable {
+        let name: String
+    }
+    let base_stat: Int
+    let stat: Stat
 }

@@ -57,6 +57,8 @@ final class PokemonListViewModel {
                 self?.pokemons = [entry]
                 self?.didUpdate?()
             case .failure:
+                self?.pokemons = []
+                self?.didUpdate?()
                 self?.didUpdateFilter?("Pokemon no encontrado")
             }
         }

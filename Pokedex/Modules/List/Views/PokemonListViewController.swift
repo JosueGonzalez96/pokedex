@@ -38,6 +38,7 @@ final class PokemonListViewController: UIViewController, UISearchBarDelegate {
         tableView.delegate = self
         tableView.register(PokemonCell.self, forCellReuseIdentifier: PokemonCell.identifier)
         tableView.rowHeight = 120
+        tableView.keyboardDismissMode = .onDrag
         
         view.addSubview(searchBar)
         view.addSubview(tableView)
@@ -45,7 +46,7 @@ final class PokemonListViewController: UIViewController, UISearchBarDelegate {
         view.addSubview(buttonFilter)
                 
         setupConstrains()
-        actions()
+        bindViewModel()
         
         viewModel.fetchPokemons()
     }
@@ -75,10 +76,12 @@ final class PokemonListViewController: UIViewController, UISearchBarDelegate {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
-    func actions() {
+    func bindViewModel() {
         buttonFilter.addTarget(self, action: #selector(clearFiltersTapped), for: .touchUpInside)
         viewModel.didUpdate = { [weak self] in
-            self?.tableView.reloadData()
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
         }
         viewModel.didUpdateFilter = { [weak self] filterBy in
             self?.showFilterLabel(text: filterBy)
@@ -95,23 +98,27 @@ final class PokemonListViewController: UIViewController, UISearchBarDelegate {
     }
 
     private func showFilterLabel(text: String) {
-        filterLabel.text = text
-           UIView.animate(withDuration: 0.25) {
-               self.filterLabel.isHidden = false
-               self.buttonFilter.isHidden = false
-               self.filterLabel.alpha = 1
-               self.buttonFilter.alpha = 1
-           }
+        DispatchQueue.main.async {
+            self.filterLabel.text = text
+               UIView.animate(withDuration: 0.25) {
+                   self.filterLabel.isHidden = false
+                   self.buttonFilter.isHidden = false
+                   self.filterLabel.alpha = 1
+                   self.buttonFilter.alpha = 1
+               }
+        }
     }
 
     private func hideFilterLabel() {
-        UIView.animate(withDuration: 0.25) {
+        DispatchQueue.main.async {
+            UIView.animate(withDuration: 0.25) {
                 self.filterLabel.alpha = 0
                 self.buttonFilter.alpha = 0
             } completion: { _ in
                 self.filterLabel.isHidden = true
                 self.buttonFilter.isHidden = true
             }
+        }
     }
 }
 
@@ -150,6 +157,7 @@ extension PokemonListViewController {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let text = searchBar.text?.lowercased(), !text.isEmpty else { return }
         searchByNameOrNumber(text)
+        self.view.endEditing(true)
     }
     
     func searchByNameOrNumber(_ query: String) {
