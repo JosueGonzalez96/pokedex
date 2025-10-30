@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 final class PokemonCell: UITableViewCell {
     
@@ -77,18 +78,8 @@ final class PokemonCell: UITableViewCell {
         numberLabel.text = "#\(pokemon.id)"
         
         if let url = URL(string: pokemon.imageUrl) {
-            DispatchQueue.global().async {
-                if let data = try? Data(contentsOf: url),
-                   let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self.pokemonImageView.image = image
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        self.pokemonImageView.image = UIImage(systemName: "questionmark")
-                    }
-                }
-            }
+            pokemonImageView.sd_setImage(with: URL(string: "http://www.domain.com/path/to/image.jpg"), placeholderImage: UIImage(systemName: "questionmark"))
+
         }
     }
     

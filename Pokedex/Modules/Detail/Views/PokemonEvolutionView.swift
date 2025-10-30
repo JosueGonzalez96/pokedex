@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 final class PokemonEvolutionView: UIView {
     
@@ -60,15 +61,8 @@ final class PokemonEvolutionView: UIView {
             imageView.clipsToBounds = true
             imageView.isUserInteractionEnabled = true
             if let url = URL(string: imageURL) {
-                DispatchQueue.global().async {
-                    if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            imageView.image = image
-                        }
-                    }
-                }
+                imageView.sd_setImage(with: url, placeholderImage: UIImage(systemName: "questionmark"))
             }
-            
             imageView.tag = id
             stack.addArrangedSubview(imageView)
         }

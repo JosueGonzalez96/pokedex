@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import SDWebImage
 
 protocol PokemonDetailDelegate: AnyObject {
     func filterBy(type: String)
@@ -123,8 +124,7 @@ final class PokemonDetailViewController: UIViewController {
         nameLabel.text = "#\(model.id) \(model.name.capitalized)"
         normalSpriteURL = model.sprites.front_default
         shinySpriteURL = model.sprites.front_shiny
-        
-        loadImage(from: normalSpriteURL, into: imageView)
+        imageView.sd_setImage(with: URL(string: normalSpriteURL ?? ""), placeholderImage: UIImage(systemName: "questionmark"))
         
         let typeNames = model.types.map { $0.type.name }
         typesView.configure(with: typeNames)
@@ -180,29 +180,11 @@ final class PokemonDetailViewController: UIViewController {
         default: return .systemGray
         }
     }
-    private func loadImage(from urlString: String?, into imageView: UIImageView) {
-        guard let urlString else { return }
-        
-        if let cached = imageCache.object(forKey: urlString as NSString) {
-            imageView.image = cached
-            return
-        }
-        
-        guard let url = URL(string: urlString) else { return }
-        
-        URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-            guard let self, let data, let image = UIImage(data: data) else { return }
-            self.imageCache.setObject(image, forKey: urlString as NSString)
-            DispatchQueue.main.async {
-                imageView.image = image
-            }
-        }.resume()
-    }
     
     @objc private func toggleShiny() {
         showingShiny.toggle()
         
-        let nextURL = showingShiny ? shinySpriteURL : normalSpriteURL
+        guard let nextURL = showingShiny ? shinySpriteURL : normalSpriteURL else { return }
         let nextTitle = showingShiny ? "🌙 Ver Normal" : "✨ Ver Shiny"
         toggleButton.setTitle(nextTitle, for: .normal)
         toggleButton.isUserInteractionEnabled = false
@@ -210,7 +192,8 @@ final class PokemonDetailViewController: UIViewController {
         UIView.transition(with: imageView,
                           duration: 0.5,
                           options: .transitionCrossDissolve) { [weak self] in
-            self?.loadImage(from: nextURL, into: self!.imageView)
+            self?.imageView.sd_setImage(with: URL(string: nextURL), placeholderImage: UIImage(systemName: "questionmark"))
+            
         } completion: { [weak self] _ in
             self?.animateImageScale()
             self?.toggleButton.isUserInteractionEnabled = true
