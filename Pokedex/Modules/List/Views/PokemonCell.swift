@@ -78,7 +78,7 @@ final class PokemonCell: UITableViewCell {
         numberLabel.text = "#\(pokemon.id)"
         
         if let url = URL(string: pokemon.imageUrl) {
-            pokemonImageView.sd_setImage(with: URL(string: "http://www.domain.com/path/to/image.jpg"), placeholderImage: UIImage(systemName: "questionmark"))
+            pokemonImageView.sd_setImage(with: url, placeholderImage: UIImage(systemName: "questionmark"))
 
         }
     }
