@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 protocol PokemonDetailDelegate: AnyObject {
     func filterBy(type: String)
@@ -30,6 +31,8 @@ final class PokemonDetailViewController: UIViewController {
     private var statLabels: [UILabel] = []
     
     var pokemonId: Int?
+    private var audioPlayer: AVPlayer?
+    
     weak var delegate: PokemonDetailDelegate?
     
     private let imageCache = NSCache<NSString, UIImage>()
@@ -94,7 +97,11 @@ final class PokemonDetailViewController: UIViewController {
     
     private func bindViewModel() {
         viewModel.didUpdate = { [weak self] in
-            DispatchQueue.main.async { self?.updateUI() }
+            DispatchQueue.main.async {
+                self?.updateUI()
+                guard let url = self?.viewModel.pokemon?.cries.latest else { return }
+                self?.playSound(from: url)
+            }
         }
         
         viewModel.didUpdateEvolution = { [weak self] arr in
@@ -223,5 +230,12 @@ final class PokemonDetailViewController: UIViewController {
     private func showPokemons(ofType type: String) {
         delegate?.filterBy(type: type)
         dismiss(animated: true)
+    }
+    
+    private func playSound(from urlString: String) {
+        guard let url = URL(string: urlString) else { return }
+        
+        audioPlayer = AVPlayer(url: url)
+        audioPlayer?.play()
     }
 }

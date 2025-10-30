@@ -12,6 +12,10 @@ struct PokemonDetail: Decodable {
     let sprites: Sprite
     let types: [TypeEntry]
     let stats: [StatEntry]
+    let cries: Cries
+}
+struct Cries: Decodable {
+    let latest: String
 }
 struct Sprite: Decodable {
     let front_default: String?
